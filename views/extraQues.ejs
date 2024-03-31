@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionnaire</title>
+    <link rel="stylesheet" href="/styles/style.css"> <!-- Update the path to your CSS file -->
+    <style>
+        * {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        /* Custom Styles */
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-link {
+            font-size: 1.1rem;
+        }
+
+        .footer-text {
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <nav class="bg-teal-500 p-6 mb-12">
+        <div class="container">
+
+            <div class="w-full flex items-center justify-between">
+                <div class="flex items-center">
+                    <img src="/Images/Ayurveda-icon2.png" alt="Ayurveda is life" class="inline-block w-10 h-10 mr-2">
+                </div>
+                <div class="navbar-brand text-white">
+                    Ayurveda Life
+                </div>
+                <div>
+
+                    <button id="navbar-toggle" class="text-white md:hidden">
+                        <svg class="fill-current h-6 w-6" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <title>Menu</title>
+                            <path d="M0 3h20v2H0zM0 9h20v2H0zM0 15h20v2H0z" />
+                        </svg>
+                    </button>
+                    <div id="navbar-menu" class="hidden flex flex-col md:block">
+                        <a href="#responsive-header" class="nav-link text-white mr-4">Home</a>
+                        <a href="#about" class="nav-link text-white mr-4">About</a>
+                        <a href="#contact" class="nav-link text-white">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="w-4/5 mx-auto bg-white p-8 rounded shadow-md">
+        <form action="/submit-responses" method="post">
+
+
+<!-- Multiple Choice Questions Section -->
+<div class="w-fit mx-auto px-4">
+
+    <h2 class="text-2xl font-bold mb-4">
+        <%=section %>
+    </h2>
+    <% let defaultOptions=['A','B','C', 'D', 'E', 'F', 'G', 'H', 'I']; let colorOptions=['green','blue','yellow', 'amber', 'lime', 'red', 'purple', 'slate']%>
+<!-- Modify the HTML to include a unique class for each question group -->
+<% Questions.forEach((question, index) => { %>
+    <div class="question-group" data-index="<%= index %>">
+        <p class="mb-4 text-lg font-medium">
+            <%= question.text %>
+        </p>
+        <% for (let i = 0; i < question.options.length; i++) { %>
+            <div class="flex items-center space-x-4">
+                <input type="checkbox" id="option<%= question.id %><%= i %>" name="ques<%= question.id %>option<%= i %>" value="<%= defaultOptions[i] %>" class="hidden">
+                <label for="option<%= question.id %><%= i %>" class="flex items-center justify-center w-12 h-12 border rounded-full cursor-pointer transition-colors duration-300 ease-in-out" onclick="toggleBackground(this)">
+                    <span class="text-lg font-semibold text-<%= colorOptions[i] %>-600"><%= defaultOptions[i] %></span>
+                </label>
+                <span class="text-lg text-gray-800"><%= question.options[i] %></span>
+            </div>
+        <% } %>
+    </div>
+<% }) %>
+
+
+</div>
+
+
+
+            <!-- Submit Button -->
+            <div class="flex justify-between">
+                <div class="flex items-center">
+                    <button
+                        class="bg-gray-200 hover:bg-gray-500 text-gray-600 px-4 py-2 rounded-full mr-2 transition duration-300 ease-in-out">Previous</button>
+                    <span class="text-gray-600 mr-2">Page <%=locals.nextPage-1 || 1 %> of 3</span>
+                </div>
+
+                <button type="submit"
+                    class="bg-green-400 hover:bg-green-800 text-white px-4 py-2 rounded-full transition duration-300 ease-in-out">Submit</button>
+
+            </div>
+        </form>
+    </div>
+    <footer class="text-center p-6 mt-10 bg-teal-500 text-white bottom-0">
+        <p class="footer-text">&copy; <%-new Date().getFullYear() %> Ayurveda Life. All rights reserved.</p>
+    </footer>
+</body>
+<script>
+    function validateForm() {
+        let questionGroups = document.querySelectorAll('.question-group');
+        for (let i = 0; i < questionGroups.length; i++) {
+            let isChecked = false;
+            let checkboxes = questionGroups[i].querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(function(checkbox) {
+                if (checkbox.checked) {
+                    isChecked = true;
+                }
+            });
+            if (!isChecked) {
+                alert("Please select at least one option for each question.");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Attach the validation function to the form submission event
+    document.querySelector('form').addEventListener('submit', function(event) {
+        if (!validateForm()) {
+            event.preventDefault(); // Prevent form submission if validation fails
+        }
+    });
+
+    // Function to toggle background color on checkbox click
+    function toggleBackground(element) {
+        element.classList.toggle('bg-teal-500');
+    }
+</script>
+
+
+</html>
