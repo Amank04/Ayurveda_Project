@@ -48,17 +48,23 @@ app.post('/submit-responses', async (req, res) => {
   console.log(page);
   // Determine the section based on the page number
   // Calculate the start and end index of questions for the current section
+
+  
+
   let startIndex, endIndex;
   let subsetOfQuestions;
   let section;
   if (page == 1) {
     console.log(req.body);
-    ansArray = [];
     section = 'Physical appearance and health.';
     startIndex = 0, endIndex = 14;
     subsetOfQuestions = questions.slice(startIndex, endIndex + 1);
     // Call the function with the userObject and existingArray
+    
+    ansArray = [];
     addValuesToArray(req.body, ansArray);
+
+    res.render('questions', { Questions: subsetOfQuestions, section, nextPage: page + 1 });
   } else if (page == 2) {
     console.log(req.body);
     section = 'Sleep pattern and energy levels';
@@ -66,7 +72,10 @@ app.post('/submit-responses', async (req, res) => {
     subsetOfQuestions = questions.slice(startIndex, endIndex + 1);
 
     // Call the function with the userObject and existingArray
+    ansArray.length = 19;
     addValuesToArray(req.body, ansArray);
+
+    res.render('questions', { Questions: subsetOfQuestions, section, nextPage: page + 1 });
   } else if (page == 3) {
     console.log(req.body);
     section = 'Diet, appetite and type of food you prefer';
@@ -74,7 +83,10 @@ app.post('/submit-responses', async (req, res) => {
     subsetOfQuestions = questions.slice(startIndex, endIndex + 1);
 
     // Call the function with the userObject and existingArray
+    ansArray.length = 21;
     addValuesToArray(req.body, ansArray);
+
+    res.render('questions', { Questions: subsetOfQuestions, section, nextPage: page + 1 });
   } else if (page == 4) {
     console.log(req.body);
     section = 'Personality, communication skills and social behavior';
@@ -82,7 +94,10 @@ app.post('/submit-responses', async (req, res) => {
     subsetOfQuestions = questions.slice(startIndex, endIndex + 1);
 
     // Call the function with the userObject and existingArray
+    ansArray.length = 26;
     addValuesToArray(req.body, ansArray);
+
+    res.render('questions', { Questions: subsetOfQuestions, section, nextPage: page + 1 });
   }
   else if (page == 5) {
     console.log(req.body);
@@ -91,15 +106,19 @@ app.post('/submit-responses', async (req, res) => {
     subsetOfQuestions = questions.slice(startIndex, endIndex + 1);
 
     // Call the function with the userObject and existingArray
+    ansArray.length = 33;
     addValuesToArray(req.body, ansArray);
+
+    res.render('questions', { Questions: subsetOfQuestions, section, nextPage: page + 1 });
   } else if (page==6) {
     console.log(req.body);
     
     // Call the function with the userObject and existingArray
+    ansArray.length = 34;
     addValuesToArray(req.body, ansArray);
 
     // Flatten the responses array and filter out non-option values
-    const options = ansArray.flat().filter(item => ['A', 'B', 'C', 'D'].includes(item));
+    const options = ansArray.flat().filter(item => ['Vata','Pitta','Kapha'].includes(item));
 
     // Count the occurrences of each option
     const counts = options.reduce((acc, option) => {
@@ -124,17 +143,27 @@ app.post('/submit-responses', async (req, res) => {
     section = 'Questions for data collection.';
     startIndex = 30, endIndex = 39;
     subsetOfQuestions = questions.slice(startIndex, endIndex + 1);
+
+    res.render('extraQues', { Questions: subsetOfQuestions, section, nextPage: page + 1 });
     
 
   } else  {
     console.log("Extra questions blog completed.")
-    console.log(req.body);
-    
-    // Call the function with the userObject and existingArray
-    addValuesToArray(req.body, ansArray);
+    if(Object.keys(req.body).length <10) {
+      section = 'Questions for data collection.';
+    startIndex = 30, endIndex = 39;
+    subsetOfQuestions = questions.slice(startIndex, endIndex + 1);
 
-//Function to store MSQ starts.
-function flattenStringArray(arr) {
+      res.render('extraQues', { Questions: subsetOfQuestions, section, nextPage: page, message:"Please select atleast one option of each question." });
+    } else {
+
+      
+      // Call the function with the userObject and existingArray
+      ansArray.length = 6;
+      addValuesToArray(req.body, ansArray);
+      
+      //Function to store MSQ starts.
+      function flattenStringArray(arr) {
   return arr.reduce((acc, val) => Array.isArray(val) ? acc.concat(flattenStringArray(val)) : acc.concat(val), []);
 }
 
@@ -144,16 +173,16 @@ console.log(flattenedStringArray); // Output: ["1", "2", "345", "6"]
 
 //Function to store MSQ ends.
 
-  await db.query("INSERT INTO prakirtiinfo (name, age, gender, birthplace, prakirtimajor, prakirtiminor, ques01, ques02, ques03, ques04, ques05, ques06, ques07, ques08, ques09, ques10) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)", [
-    ansArray[0], ansArray[1], ansArray[2], ansArray[3], ansArray[4], ansArray[5], ansArray[6], ansArray[7], ansArray[8], ansArray[9], ansArray[10], ansArray[11], ansArray[12], ansArray[13], ansArray[14], ansArray[15]
-  ]);
+await db.query("INSERT INTO prakirtiinfo (name, age, gender, birthplace, prakirtimajor, prakirtiminor, ques01, ques02, ques03, ques04, ques05, ques06, ques07, ques08, ques09, ques10) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)", [
+  ansArray[0], ansArray[1], ansArray[2], ansArray[3], ansArray[4], ansArray[5], ansArray[6], ansArray[7], ansArray[8], ansArray[9], ansArray[10], ansArray[11], ansArray[12], ansArray[13], ansArray[14], ansArray[15]
+]);
 
-  res.send("<h1>Your response is submitted successfully</h1>");
-  return ;
+res.send("<h1>Your response is submitted successfully</h1>");
+
+}
   }
   console.log(ansArray);
-  // Render the questions.ejs file with the subset of questions and section heading
-  res.render('questions', { Questions: subsetOfQuestions, section, nextPage: page + 1 });
+  
 });
 
 

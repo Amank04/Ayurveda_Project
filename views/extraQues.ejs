@@ -5,8 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Questionnaire</title>
-    <link rel="stylesheet" href="/styles/style.css"> <!-- Update the path to your CSS file -->
+    <!-- Include your CSS file -->
+    <link rel="stylesheet" href="/styles/style.css">
     <style>
+        /* Your custom styles here */
         * {
             padding: 0px;
             margin: 0px;
@@ -29,7 +31,8 @@
 </head>
 
 <body class="bg-gray-100">
-    <nav class="bg-teal-500 p-6 mb-12">
+    <!-- Your navigation bar -->
+    <nav class="bg-teal-500 p-6 <%= locals.message ? 'mb-0' : 'mb-12' %>">
         <div class="container">
 
             <div class="w-full flex items-center justify-between">
@@ -57,89 +60,185 @@
         </div>
     </nav>
 
-    <div class="w-4/5 mx-auto bg-white p-8 rounded shadow-md">
-        <form action="/submit-responses" method="post">
+    <% if(locals.message) {%>
+        <div class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md" role="alert">
+            <div class="flex">
+                <div class="py-1"><svg class="fill-current h-6 w-6 text-teal-500 mr-4"
+                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path
+                            d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z" />
+                    </svg></div>
+                <div>
+                    <p class="font-bold">Incomplete Questionnaire</p>
+                    <p class="text-sm">Kindly ensure that each question has at least one option selected before
+                        submission.</p>
 
-
-<!-- Multiple Choice Questions Section -->
-<div class="w-fit mx-auto px-4">
-
-    <h2 class="text-2xl font-bold mb-4">
-        <%=section %>
-    </h2>
-    <% let defaultOptions=['A','B','C', 'D', 'E', 'F', 'G', 'H', 'I']; let colorOptions=['green','blue','yellow', 'amber', 'lime', 'red', 'purple', 'slate']%>
-<!-- Modify the HTML to include a unique class for each question group -->
-<% Questions.forEach((question, index) => { %>
-    <div class="question-group" data-index="<%= index %>">
-        <p class="mb-4 text-lg font-medium">
-            <%= question.text %>
-        </p>
-        <% for (let i = 0; i < question.options.length; i++) { %>
-            <div class="flex items-center space-x-4">
-                <input type="checkbox" id="option<%= question.id %><%= i %>" name="ques<%= question.id %>option<%= i %>" value="<%= defaultOptions[i] %>" class="hidden">
-                <label for="option<%= question.id %><%= i %>" class="flex items-center justify-center w-12 h-12 border rounded-full cursor-pointer transition-colors duration-300 ease-in-out" onclick="toggleBackground(this)">
-                    <span class="text-lg font-semibold text-<%= colorOptions[i] %>-600"><%= defaultOptions[i] %></span>
-                </label>
-                <span class="text-lg text-gray-800"><%= question.options[i] %></span>
-            </div>
-        <% } %>
-    </div>
-<% }) %>
-
-
-</div>
-
-
-
-            <!-- Submit Button -->
-            <div class="flex justify-between">
-                <div class="flex items-center">
-                    <button
-                        class="bg-gray-200 hover:bg-gray-500 text-gray-600 px-4 py-2 rounded-full mr-2 transition duration-300 ease-in-out">Previous</button>
-                    <span class="text-gray-600 mr-2">Page <%=locals.nextPage-1 || 1 %> of 3</span>
                 </div>
-
-                <button type="submit"
-                    class="bg-green-400 hover:bg-green-800 text-white px-4 py-2 rounded-full transition duration-300 ease-in-out">Submit</button>
-
             </div>
-        </form>
-    </div>
-    <footer class="text-center p-6 mt-10 bg-teal-500 text-white bottom-0">
-        <p class="footer-text">&copy; <%-new Date().getFullYear() %> Ayurveda Life. All rights reserved.</p>
-    </footer>
+        </div>
+        <% } %>
+
+            <!-- Your form -->
+            <div class="w-4/5 mx-auto bg-white p-8 rounded shadow-md">
+                <form action="/submit-responses?page=<%= nextPage%>" method="post">
+                    <!-- Update the action attribute with your endpoint URL -->
+                    <!-- Name, Age, Gender, Place of Birth Section -->
+                    <% if(locals.nextPage>1) { %>
+                        <!-- Multiple Choice Questions Section -->
+                        <div class="w-fit mx-auto px-4">
+                            <h2 class="text-2xl font-bold mb-4">
+                                <%=section %>
+                            </h2>
+                            <% Questions.forEach((question)=> {%>
+                                <div id="question<%=question.id%>" class="mb-6 bg-white shadow-md rounded-lg p-6">
+                                    <p class="mb-4 text-lg font-medium">
+                                        <%=question.text %>
+                                    </p>
+                                    <% let colorOptions=['green','blue','yellow', 'amber' , 'lime' , 'red' , 'purple'
+                                        , 'slate' ]; %>
+                                        <% question.options.forEach((option, index)=> { %>
+                                            <div class="flex items-center space-x-4">
+                                                <input type="checkbox" id="option<%=question.id%><%=index%>"
+                                                    name="color<%=question.id%>"
+                                                    value="<%=String.fromCharCode(65 + index)%>" class="hidden">
+                                                <label for="option<%=question.id%><%=index%>"
+                                                    class="flex items-center justify-center w-12 h-12 border rounded-full cursor-pointer transition-colors duration-300 ease-in-out"
+                                                    onclick="toggleBackground(this)">
+                                                    <span
+                                                        class="text-lg font-semibold text-<%=colorOptions[index % colorOptions.length]%>-600">
+                                                        <%=String.fromCharCode(65 + index)%>
+                                                    </span>
+                                                </label>
+                                                <span class="text-lg text-gray-800">
+                                                    <%=option%>
+                                                </span>
+                                            </div>
+                                            <% }); %>
+                                </div>
+                                <% }); %>
+                        </div>
+                        <% } else { %>
+                            <!-- Personal Information Section -->
+                            <!-- Your personal information input fields -->
+                            <div class="">
+                                <div class="block">
+
+                                    <h1 class="text-3xl text-center">Personal Information</h1>
+                                    <div class="grid justify-center">
+
+                                        <img src="/Images/user-information.png" class="w-20 h-20 my-6 items-center"
+                                            alt="user">
+                                    </div>
+                                </div>
+                                <div class="mb-6">
+                                    <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                                    <input type="text" id="name" name="name"
+                                        class="form-input mt-1 block w-full rounded-md shadow-sm"
+                                        placeholder="Enter your name" required>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="mb-6">
+                                        <label for="age" class="block text-sm font-medium text-gray-700">Age</label>
+                                        <select id="age" name="age"
+                                            class="form-select mt-1 block w-full rounded-md shadow-sm" required>
+                                            <option value="children">(0-12) yrs Children</option>
+                                            <option value="teenages">(13-19) Teenagers</option>
+                                            <option value="youngAdult">(20-39) Young Adult</option>
+                                            <option value="middleAgedAdult">(40-59) Middle-Aged Adult</option>
+                                            <option value="seniorCitizen">(60 & above) Senior Citizen </option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-6">
+                                        <label for="gender"
+                                            class="block text-sm font-medium text-gray-700">Gender</label>
+                                        <select id="gender" name="gender"
+                                            class="form-select mt-1 block w-full rounded-md shadow-sm" required>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-6">
+                                    <label for="placeOfBirth" class="block text-sm font-medium text-gray-700">Place of
+                                        Birth</label>
+                                    <input type="text" id="placeOfBirth" name="placeOfBirth"
+                                        class="form-input mt-1 block w-full rounded-md shadow-sm"
+                                        placeholder="Enter your place of birth" required>
+                                </div>
+
+                            </div>
+
+                            <% } %>
+                                <!-- Submit Button -->
+                                <div class="flex justify-between">
+                                    <div class="flex items-center">
+                                        <button
+                                            class="bg-gray-200 hover:bg-gray-500 text-gray-600 px-4 py-2 rounded-full mr-2 transition duration-300 ease-in-out">Previous</button>
+                                        <span class="text-gray-600 mr-2">Page <%=locals.nextPage-1 || 1 %> of 8</span>
+                                        <% if (locals.nextPage!=7) { %>
+                                            <button type="submit"
+                                                class="bg-gray-200 hover:bg-gray-300 text-gray-600 px-4 py-2 rounded-full mr-2 transition duration-300 ease-in-out">Next</button>
+                                            <% } %>
+                                    </div>
+                                    <% if(locals.nextPage==7) { %>
+                                        <button type="submit"
+                                            class="bg-green-400 hover:bg-green-800 text-white px-4 py-2 rounded-full transition duration-300 ease-in-out">Submit</button>
+                                        <% } %>
+                                </div>
+                </form>
+            </div>
+            <!-- Your footer -->
+            <footer class="text-center p-6 mt-10 bg-teal-500 text-white bottom-0">
+                <p class="footer-text">&copy; <%-new Date().getFullYear() %> Ayurveda Life. All rights reserved.</p>
+            </footer>
+            <!-- Your JavaScript -->
 </body>
+
 <script>
     function validateForm() {
-        let questionGroups = document.querySelectorAll('.question-group');
-        for (let i = 0; i < questionGroups.length; i++) {
-            let isChecked = false;
-            let checkboxes = questionGroups[i].querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(function(checkbox) {
-                if (checkbox.checked) {
-                    isChecked = true;
+        let questions = document.querySelectorAll('[id^="question"]');
+        let isAnyOptionSelected = false; // Assume no option is selected by default
+
+        questions.forEach((question) => {
+            let options = question.querySelectorAll('[name^="color"]');
+
+            // Check if at least one option is checked for this question
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].checked) {
+                    isAnyOptionSelected = true;
+                    break; // Exit the loop if at least one option is checked
                 }
-            });
-            if (!isChecked) {
-                alert("Please select at least one option for each question.");
+            }
+
+            // If no option is selected for this question, break the loop
+            if (!isAnyOptionSelected) {
                 return false;
             }
+        });
+
+        // If no option is selected for any question, show alert and return false
+        if (!isAnyOptionSelected) {
+            alert("Please select at least one option for each question.");
+            return false;
         }
-        return true;
+
+        return true; // Submit the form if at least one option is selected for each question
     }
 
-    // Attach the validation function to the form submission event
-    document.querySelector('form').addEventListener('submit', function(event) {
-        if (!validateForm()) {
-            event.preventDefault(); // Prevent form submission if validation fails
-        }
+    // Toggle the "hidden" class on the navbar menu when the button is clicked
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('navbar-toggle').addEventListener('click', function () {
+            var menu = document.getElementById('navbar-menu');
+            menu.classList.toggle('hidden');
+        });
     });
 
-    // Function to toggle background color on checkbox click
+    // Toggle background color class
     function toggleBackground(element) {
         element.classList.toggle('bg-teal-500');
     }
-</script>
 
+</script>
 
 </html>
