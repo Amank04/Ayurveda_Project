@@ -62,6 +62,8 @@
             <!-- Update the action attribute with your endpoint URL -->
             <!-- Name, Age, Gender, Place of Birth Section -->
             <% if(locals.nextPage>1) { %>
+
+                <!-- Multiple Choice Questions Section -->
 <!-- Multiple Choice Questions Section -->
 <div class="w-fit mx-auto px-4">
 
@@ -74,12 +76,12 @@
         <p class="mb-4 text-lg font-medium">
             <%=question.text %>
         </p>
-        <% let defaultOptions=['A','B','C', 'D', 'E', 'F','G', 'H', 'I', 'J']; let colorOptions=['green','blue','yellow', 'amber', 'lime', 'red', 'purple', 'slate']%>
+        <% let defaultOptions=['A','B','C']; let colorOptions=['green','blue','yellow']; let defaultValues = ['Vata','Pitta','Kapha']%>
         <% for(let i=0;i<(question.options.length);i++) { %>
         <div class="flex items-center space-x-4">
 
-            <input type="checkbox" id="option<%=question.id%><%=i%>" name="color<%=question.id%>" value="<%=defaultOptions[i]%>" class="hidden">
-            <label for="option<%=question.id%><%=i%>" class="flex items-center justify-center w-12 h-12 border rounded-full cursor-pointer transition-colors duration-300 ease-in-out" onclick="toggleBackground(this)">
+            <input type="radio" id="option<%=question.id%><%=i%>" name="color<%=question.id%>" value="<%=defaultValues[i]%>" class="hidden" onclick="toggleBackground(this)">
+            <label for="option<%=question.id%><%=i%>" class="flex items-center justify-center w-12 h-12 border rounded-full cursor-pointer transition-colors duration-300 ease-in-out">
                 <span class="text-lg font-semibold text-<%=colorOptions[i]%>-600"><%=defaultOptions[i]%></span>
             </label>
             <span class="text-lg text-gray-800"><%=question.options[i] %></span>
@@ -165,43 +167,72 @@
     </footer>
 </body>
 <script>
-    // Function to validate if at least one checkbox is checked for each question
-    function validateForm() {
-        let questions = document.querySelectorAll('[name^="color"]');
-        for (let i = 0; i < questions.length; i += 3) {
-            let isChecked = false;
-            for (let j = 0; j < 3; j++) {
-                if (questions[i + j].checked) {
-                    isChecked = true;
-                    break;
-                }
-            }
-            if (!isChecked) {
-                alert("Please select at least one option for each question.");
-                return false;
-            }
+   // Function to validate if at least one option is selected for each question
+function validateForm() {
+    let questions = document.querySelectorAll('[name^="color"]');
+    let questionGroups = {}; // Object to store selected options for each question
+    let isValid = true; // Flag to track overall validation result
+    
+    questions.forEach(question => {
+        let questionId = question.name.replace("color", ""); // Extract question ID
+        if (!questionGroups[questionId]) {
+            questionGroups[questionId] = [];
         }
-        return true;
-    }
-
-    // Attach the validation function to the form submission event
-    document.querySelector('form').addEventListener('submit', function (event) {
-        if (!validateForm()) {
-            event.preventDefault(); // Prevent form submission if validation fails
+        if (question.checked) {
+            if (questionGroups[questionId].includes(question.value)) {
+                // Alert if the same option is selected again
+                alert("You can only select one option per question.");
+                isValid = false;
+            } else {
+                questionGroups[questionId].push(question.value);
+            }
         }
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
-        // Toggle the "hidden" class on the navbar menu when the button is clicked
-        document.getElementById('navbar-toggle').addEventListener('click', function () {
-            var menu = document.getElementById('navbar-menu');
-            menu.classList.toggle('hidden');
-        });
-    });
-
-    function toggleBackground(element) {
-        element.classList.toggle('bg-teal-500'); // Toggle background color class
+    if (!isValid) {
+        return false;
     }
+
+    for (let questionId in questionGroups) {
+        if (questionGroups[questionId].length !== 1) {
+            // Alert if no option is selected for a question
+            alert("Please select one option for each question.");
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// Attach the validation function to the form submission event
+document.querySelector('form').addEventListener('submit', function (event) {
+    if (!validateForm()) {
+        event.preventDefault(); // Prevent form submission if validation fails
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Toggle the "hidden" class on the navbar menu when the button is clicked
+    document.getElementById('navbar-toggle').addEventListener('click', function () {
+        var menu = document.getElementById('navbar-menu');
+        menu.classList.toggle('hidden');
+    });
+});
+
+function toggleBackground(element) {
+    let questionId = element.name.replace("color", "");
+    let options = document.querySelectorAll('[name="color' + questionId + '"]');
+    options.forEach(option => {
+        // Add background color class only to the selected option
+        if (option.checked) {
+            option.nextElementSibling.classList.add('bg-teal-500');
+        } else {
+            option.nextElementSibling.classList.remove('bg-teal-500');
+        }
+    });
+}
+
+
 </script>
 
 </html>
