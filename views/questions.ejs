@@ -108,7 +108,7 @@
                         <div class="mb-6">
                             <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
                             <input type="text" id="name" name="name"
-                                class="form-input mt-1 block w-full rounded-md shadow-sm" placeholder="Enter your name"
+                                class="form-input mt-1 block w-full rounded-md shadow-sm" placeholder="Enter your name" autocomplete="off"
                                 required>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -138,7 +138,7 @@
                                 Birth</label>
                             <input type="text" id="placeOfBirth" name="placeOfBirth"
                                 class="form-input mt-1 block w-full rounded-md shadow-sm"
-                                placeholder="Enter your place of birth" required>
+                                placeholder="Enter your place of birth" autocomplete="off" required>
                         </div>
 
                     </div>
@@ -149,7 +149,7 @@
                             <div class="flex items-center">
                                 <button
                                     class="bg-gray-200 hover:bg-gray-500 text-gray-600 px-4 py-2 rounded-full mr-2 transition duration-300 ease-in-out">Previous</button>
-                                <span class="text-gray-600 mr-2">Page <%=locals.nextPage-1 || 1 %> of 8</span>
+                                <span class="text-gray-600 mr-2">Page <%=locals.nextPage-1 || 1 %> of 6</span>
                                 <% if (locals.nextPage!=7) { %>
                                     <button type="submit"
                                         class="bg-gray-200 hover:bg-gray-300 text-gray-600 px-4 py-2 rounded-full mr-2 transition duration-300 ease-in-out">Next</button>

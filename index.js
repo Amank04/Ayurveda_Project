@@ -2,6 +2,7 @@ import express from "express";
 import pg from "pg";
 import bodyParser from "body-parser";
 import env from "dotenv";
+import uniqid from "uniqid";
 
 const app = express();
 env.config();
@@ -22,11 +23,16 @@ const db = new pg.Client({
 db.connect();
 
 app.get('/', (req, res) => {
+
   res.render("index.ejs");
 })
 
 
 app.get('/questions', (req, res) => {
+  res.render('questions', { nextPage: 1 });
+})
+
+app.get('/history', (req, res) => {
   res.render('questions', { nextPage: 1 });
 })
 
@@ -44,29 +50,29 @@ function addValuesToArray(obj, arr) {
 app.post('/submit-responses', async (req, res) => {
   // Parse the page number from the query parameter, default to 1 if not provided
   const page = parseInt(req.query.page);
-  console.log(req.body);
-  console.log(page);
+  // console.log(req.body);
+  // console.log(page);
   // Determine the section based on the page number
   // Calculate the start and end index of questions for the current section
 
-  
+
 
   let startIndex, endIndex;
   let subsetOfQuestions;
   let section;
   if (page == 1) {
-    console.log(req.body);
+    // console.log(req.body);
     section = 'Physical appearance and health.';
     startIndex = 0, endIndex = 14;
     subsetOfQuestions = questions.slice(startIndex, endIndex + 1);
     // Call the function with the userObject and existingArray
-    
+
     ansArray = [];
     addValuesToArray(req.body, ansArray);
 
     res.render('questions', { Questions: subsetOfQuestions, section, nextPage: page + 1 });
   } else if (page == 2) {
-    console.log(req.body);
+    // console.log(req.body);
     section = 'Sleep pattern and energy levels';
     startIndex = 15, endIndex = 16;
     subsetOfQuestions = questions.slice(startIndex, endIndex + 1);
@@ -77,7 +83,7 @@ app.post('/submit-responses', async (req, res) => {
 
     res.render('questions', { Questions: subsetOfQuestions, section, nextPage: page + 1 });
   } else if (page == 3) {
-    console.log(req.body);
+    // console.log(req.body);
     section = 'Diet, appetite and type of food you prefer';
     startIndex = 17, endIndex = 21;
     subsetOfQuestions = questions.slice(startIndex, endIndex + 1);
@@ -88,7 +94,7 @@ app.post('/submit-responses', async (req, res) => {
 
     res.render('questions', { Questions: subsetOfQuestions, section, nextPage: page + 1 });
   } else if (page == 4) {
-    console.log(req.body);
+    // console.log(req.body);
     section = 'Personality, communication skills and social behavior';
     startIndex = 22, endIndex = 28;
     subsetOfQuestions = questions.slice(startIndex, endIndex + 1);
@@ -100,7 +106,7 @@ app.post('/submit-responses', async (req, res) => {
     res.render('questions', { Questions: subsetOfQuestions, section, nextPage: page + 1 });
   }
   else if (page == 5) {
-    console.log(req.body);
+    // console.log(req.body);
     section = 'Preferred type of weather';
     startIndex = 29, endIndex = 29;
     subsetOfQuestions = questions.slice(startIndex, endIndex + 1);
@@ -110,15 +116,15 @@ app.post('/submit-responses', async (req, res) => {
     addValuesToArray(req.body, ansArray);
 
     res.render('questions', { Questions: subsetOfQuestions, section, nextPage: page + 1 });
-  } else if (page==6) {
-    console.log(req.body);
-    
+  } else if (page == 6) {
+    // console.log(req.body);
+
     // Call the function with the userObject and existingArray
     ansArray.length = 34;
     addValuesToArray(req.body, ansArray);
 
     // Flatten the responses array and filter out non-option values
-    const options = ansArray.flat().filter(item => ['Vata','Pitta','Kapha'].includes(item));
+    const options = ansArray.flat().filter(item => ['Vata', 'Pitta', 'Kapha'].includes(item));
 
     // Count the occurrences of each option
     const counts = options.reduce((acc, option) => {
@@ -138,51 +144,59 @@ app.post('/submit-responses', async (req, res) => {
     ansArray.length = 4;
     ansArray.push(mostUsed);
     ansArray.push(secondMostUsed);
-    
+
 
     section = 'Questions for data collection.';
     startIndex = 30, endIndex = 39;
     subsetOfQuestions = questions.slice(startIndex, endIndex + 1);
 
     res.render('extraQues', { Questions: subsetOfQuestions, section, nextPage: page + 1 });
-    
 
-  } else  {
+
+  } else {
     console.log("Extra questions blog completed.")
-    if(Object.keys(req.body).length <10) {
+    if (Object.keys(req.body).length < 10) {
       section = 'Questions for data collection.';
-    startIndex = 30, endIndex = 39;
-    subsetOfQuestions = questions.slice(startIndex, endIndex + 1);
+      startIndex = 30, endIndex = 39;
+      subsetOfQuestions = questions.slice(startIndex, endIndex + 1);
 
-      res.render('extraQues', { Questions: subsetOfQuestions, section, nextPage: page, message:"Please select atleast one option of each question." });
+      res.render('extraQues', { Questions: subsetOfQuestions, section, nextPage: page, message: "Please select atleast one option of each question." });
     } else {
 
-      
+
       // Call the function with the userObject and existingArray
       ansArray.length = 6;
       addValuesToArray(req.body, ansArray);
-      
+
       //Function to store MSQ starts.
       function flattenStringArray(arr) {
-  return arr.reduce((acc, val) => Array.isArray(val) ? acc.concat(flattenStringArray(val)) : acc.concat(val), []);
-}
+        return arr.reduce((acc, val) => Array.isArray(val) ? acc.concat(flattenStringArray(val)) : acc.concat(val), []);
+      }
 
-// const nestedStringArray = ["1", "2", ["3", "4", "5"], "6"];
-const flattenedStringArray = flattenStringArray(ansArray);
-console.log(flattenedStringArray); // Output: ["1", "2", "345", "6"]
+      // const nestedStringArray = ["1", "2", ["3", "4", "5"], "6"];
+      const flattenedStringArray = flattenStringArray(ansArray);
+      // console.log(flattenedStringArray); // Output: ["1", "2", "345", "6"]
 
-//Function to store MSQ ends.
+      //Function to store MSQ ends.
 
-await db.query("INSERT INTO prakirtiinfo (name, age, gender, birthplace, prakirtimajor, prakirtiminor, ques01, ques02, ques03, ques04, ques05, ques06, ques07, ques08, ques09, ques10) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)", [
-  ansArray[0], ansArray[1], ansArray[2], ansArray[3], ansArray[4], ansArray[5], ansArray[6], ansArray[7], ansArray[8], ansArray[9], ansArray[10], ansArray[11], ansArray[12], ansArray[13], ansArray[14], ansArray[15]
-]);
+      try {
+        let result = await db.query("INSERT INTO prakirtiinfo (name, age, gender, birthplace, prakirtimajor, prakirtiminor, ques01, ques02, ques03, ques04, ques05, ques06, ques07, ques08, ques09, ques10, referenceid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) RETURNING *", [
+          ansArray[0], ansArray[1], ansArray[2], ansArray[3], ansArray[4], ansArray[5], ansArray[6], ansArray[7], ansArray[8], ansArray[9], ansArray[10], ansArray[11], ansArray[12], ansArray[13], ansArray[14], ansArray[15], uniqid()
+        ]);
 
-res.send("<h1>Your response is submitted successfully</h1>");
+        const referenceid = result.rows[0].referenceid;
+        const name = result.rows[0].name;
+        const majorprakirti = result.rows[0].prakirtimajor;
+        const minorprakirti = result.rows[0].prakirtiminor;
+        res.render("submitform.ejs", { ReferenceID: referenceid, name: name, prakirtiMajor: majorprakirti, prakirtiMinor: minorprakirti })
+      } catch (error) {
+        console.error("Error inserting data: ", error);
+      }
 
-}
+    }
   }
-  console.log(ansArray);
-  
+  // console.log(ansArray);
+
 });
 
 
@@ -276,7 +290,7 @@ const questions = [
   },
   {
     id: 17,
-    text: "W What is your energy type? (After waking up)",
+    text: "What is your energy type? (After waking up)",
     options: ["Bursts of energy followed by periods of fatigue.", "Moderate but steady energy throughout the day.", "Steady, enduring energy but tendency towards lethargy."],
   },
   {
