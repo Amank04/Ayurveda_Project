@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionnaire</title>
+    <!-- Include Tailwind CSS -->
+    <link rel="stylesheet" href="/styles/style.css"> <!-- Update the path to your CSS file -->
+    <style>
+        /* Your custom styles here */
+        /* Custom heading style */
+        .user-prakriti {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #4A5568;
+            /* Dark gray color */
+        }
+
+        .footer-text {
+            font-size: 0.9rem;
+        }
+
+        /* Custom Styles */
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-link {
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 ">
+    <!-- Navigation bar -->
+    <nav class="bg-teal-500 p-6 mb-12">
+        <div class="container">
+
+            <div class="w-full flex items-center justify-between">
+                <div class="flex items-center">
+                    <img src="/Images/Ayurveda-icon2.png" alt="Ayurveda is life" class="inline-block w-10 h-10 mr-2">
+                </div>
+                <div class="navbar-brand text-white">
+                    Ayurveda Life
+                </div>
+                <div>
+
+                    <button id="navbar-toggle" class="text-white md:hidden">
+                        <svg class="fill-current h-6 w-6" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <title>Menu</title>
+                            <path d="M0 3h20v2H0zM0 9h20v2H0zM0 15h20v2H0z" />
+                        </svg>
+                    </button>
+                    <div id="navbar-menu" class="hidden flex flex-col md:block">
+                        <a href="/" class="nav-link text-white mr-4">Home</a>
+                        <a href="#about" class="nav-link text-white mr-4">About</a>
+                        <a href="#contact" class="nav-link text-white">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Form to input reference ID -->
+    <div class="container mx-auto">
+        <div class="w-fit mx-auto bg-white rounded-xl shadow-md overflow-hidden p-8">
+            <h1 class="user-prakriti text-2xl font-semibold mb-4 text-center">Check Your Details</h1>
+            <form id="details-form" method="POST" action="/search" class="space-y-4">
+                <div class="flex flex-col space-y-1 mx-auto relative w-full">
+                    <label for="referenceId" class="text-gray-600 text-center">Enter Reference ID</label>
+                    <input type="text" id="referenceId" name="referenceId"
+                        class="border mx-auto border-gray-300 rounded-md py-2 px-3 max-w-md focus:outline-none focus:border-teal-500"
+                        required>
+                </div>
+                <div class="text-center">
+                    <button type="submit"
+                        class="bg-teal-500 text-white font-semibold py-2 px-4 rounded hover:bg-teal-600 focus:outline-none focus:bg-teal-600">Submit</button>
+                </div>
+            </form>
+
+            <% if(locals.name) { %>
+
+            <div class="p-8">
+                <h1 class="user-prakriti text-2xl font-semibold mb-4 text-center">Your Prakriti: <span
+                        class="text-teal-500 text-3xl">
+                    <%=prakirtiMajor %>-<%=prakirtiMinor %>
+                    </span></h1>
+                <h2 class="text-2xl font-semibold mb-4 text-center">Thank You!
+                    <span class="text-teal-500">
+                     <%=name %>
+                    </span>
+                </h2>
+
+
+                    <p class="text-lg mb-6 text-center">Your reference ID is: 
+                        <span id="referenceId"class="font-bold text-teal-500">
+                            <%=ReferenceID %>
+                        </span>
+                    </p>
+                    <p class="text-lg text-center">We appreciate your submission.</p>
+                    <div class="flex justify-center mt-3">
+                        <a href="/"
+                        class="bg-grey border-double border-4 w-fit border-sky-400 focus:cursor-auto outline-red-500 hover:bg-teal-700 text-black hover:text-white font-bold py-2 px-4 rounded">
+                        Home
+                    </a>
+                </div>
+            </div>
+            <%     } %>
+            
+            <% if(locals.errorMessage) { %>
+
+                <div class="p-8" id="notFoundMessage">
+                    <h1 class="user-prakriti text-2xl font-semibold mb-4 text-center">
+                        <%=errorMessage %>
+                    </h1>
+                    <p class="text-lg mb-6 text-center">The reference ID you provided does not exist.</p>
+                    <p class="text-lg text-center">Please double-check your reference ID and try again.</p>
+                    <div class="flex justify-center mt-3">
+                        <a href="/questions" class="bg-grey border-double border-4 w-fit border-sky-400 focus:cursor-auto outline-red-500 hover:bg-teal-700 text-black hover:text-white font-bold py-2 px-4 rounded">
+                            Take Quiz
+                        </a>
+                    </div>
+                </div>
+                <%   } %>
+            
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center p-6 my-0 bg-teal-500 text-white bottom-0 relative top-[50px]">
+        <p class="footer-text">&copy; <%-new Date().getFullYear() %> Ayurveda Life. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+
+        // Toggle the "hidden" class on the navbar menu when the button is clicked
+        document.getElementById('navbar-toggle').addEventListener('click', function () {
+            var menu = document.getElementById('navbar-menu');
+            menu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+
+</html>

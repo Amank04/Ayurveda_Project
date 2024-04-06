@@ -33,7 +33,7 @@ app.get('/questions', (req, res) => {
 })
 
 app.get('/history', (req, res) => {
-  res.render('questions', { nextPage: 1 });
+  res.render('searchRefID');
 })
 
 //Array containing answer of each question.
@@ -188,7 +188,7 @@ app.post('/submit-responses', async (req, res) => {
         const name = result.rows[0].name;
         const majorprakirti = result.rows[0].prakirtimajor;
         const minorprakirti = result.rows[0].prakirtiminor;
-        res.render("submitform.ejs", { ReferenceID: referenceid, name: name, prakirtiMajor: majorprakirti, prakirtiMinor: minorprakirti })
+        res.render("submitform.ejs", { ReferenceID: referenceid, name: name, prakirtiMajor: majorprakirti, prakirtiMinor: minorprakirti });
       } catch (error) {
         console.error("Error inserting data: ", error);
       }
@@ -199,7 +199,29 @@ app.post('/submit-responses', async (req, res) => {
 
 });
 
+app.post("/search",async (req,res) => {
+  const referenceid = req.body.referenceId;
 
+  try {
+  
+    let result = await db.query("SELECT * from prakirtiinfo WHERE referenceid = $1",[referenceid]);
+
+    if (result.rows.length > 0) {
+        const name = result.rows[0].name;
+        const minorprakirti = result.rows[0].prakirtiminor;
+        const majorprakirti = result.rows[0].prakirtimajor;
+        res.render("searchRefID.ejs", { ReferenceID: referenceid, name: name, prakirtiMajor: majorprakirti, prakirtiMinor: minorprakirti });
+    } else {
+        // If no record found with the provided reference ID
+        res.render("searchRefID.ejs", { errorMessage: "Reference ID not found" });
+    }
+} catch (error) {
+    // console.error("Error searching referenceID: ", error);
+    // Handle other errors such as database connection issues
+    res.render("searchRefID.ejs", { errorMessage: "An error occurred while processing your request" });
+}
+
+})
 
 
 const server = app.listen(3000, () => {
