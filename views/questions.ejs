@@ -64,35 +64,43 @@
             <% if(locals.nextPage>1) { %>
 
                 <!-- Multiple Choice Questions Section -->
-<!-- Multiple Choice Questions Section -->
-<div class="w-fit mx-auto px-4">
+                <!-- Multiple Choice Questions Section -->
+                <div class="w-fit mx-auto px-4">
 
-    <h2 class="text-2xl font-bold mb-4">
-        <%=section %>
-    </h2>
-    <% Questions.forEach((question)=> {%>
+                    <h2 class="text-2xl font-bold mb-4">
+                        <%=section %>
+                    </h2>
+                    <% Questions.forEach((question)=> {%>
 
-    <div class="mb-6 bg-white shadow-md rounded-lg p-6">
-        <p class="mb-4 text-lg font-medium">
-            <%=question.text %>
-        </p>
-        <% let defaultOptions=['A','B','C']; let colorOptions=['green','blue','yellow']; let defaultValues = ['Vata','Pitta','Kapha']%>
-        <% for(let i=0;i<(question.options.length);i++) { %>
-        <div class="flex items-center space-x-4">
+                        <div class="mb-6 bg-white shadow-md rounded-lg p-6">
+                            <p class="mb-4 text-lg font-medium">
+                                <%=question.text %>
+                            </p>
+                            <% let defaultOptions=['A','B','C']; let colorOptions=['green','blue','yellow']; let
+                                defaultValues=['Vata','Pitta','Kapha']%>
+                                <% for(let i=0;i<(question.options.length);i++) { %>
+                                    <div class="flex items-center space-x-4">
 
-            <input type="radio" id="option<%=question.id%><%=i%>" name="color<%=question.id%>" value="<%=defaultValues[i]%>" class="hidden" onclick="toggleBackground(this)">
-            <label for="option<%=question.id%><%=i%>" class="flex items-center justify-center w-12 h-12 border rounded-full cursor-pointer transition-colors duration-300 ease-in-out">
-                <span class="text-lg font-semibold text-<%=colorOptions[i]%>-600"><%=defaultOptions[i]%></span>
-            </label>
-            <span class="text-lg text-gray-800"><%=question.options[i] %></span>
+                                        <input type="radio" id="option<%=question.id%><%=i%>"
+                                            name="color<%=question.id%>" value="<%=defaultValues[i]%>" class="hidden"
+                                            onclick="toggleBackground(this)">
+                                        <label for="option<%=question.id%><%=i%>"
+                                            class="flex items-center justify-center w-12 h-12 border rounded-full cursor-pointer transition-colors duration-300 ease-in-out">
+                                            <span class="text-lg font-semibold text-<%=colorOptions[i]%>-600">
+                                                <%=defaultOptions[i]%>
+                                            </span>
+                                        </label>
+                                        <span class="text-lg text-gray-800">
+                                            <%=question.options[i] %>
+                                        </span>
 
-        </div>
-        <% } %>
-    </div>
+                                    </div>
+                                    <% } %>
+                        </div>
 
-    <% }) %>
+                        <% }) %>
 
-</div>
+                </div>
 
 
                 <% } else { %>
@@ -108,8 +116,8 @@
                         <div class="mb-6">
                             <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
                             <input type="text" id="name" name="name"
-                                class="form-input mt-1 block w-full rounded-md shadow-sm" placeholder="Enter your name" autocomplete="off"
-                                required>
+                                class="form-input mt-1 block w-full rounded-md shadow-sm" placeholder="Enter your name"
+                                autocomplete="off" required>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="mb-6">
@@ -147,8 +155,11 @@
                         <!-- Submit Button -->
                         <div class="flex justify-between">
                             <div class="flex items-center">
-                                <button
+                                <% if(locals.nextPage!=1) { %>
+                                    <button type="submit"
                                     class="bg-gray-200 hover:bg-gray-500 text-gray-600 px-4 py-2 rounded-full mr-2 transition duration-300 ease-in-out">Previous</button>
+
+                                    <% }%>
                                 <span class="text-gray-600 mr-2">Page <%=locals.nextPage-1 || 1 %> of 6</span>
                                 <% if (locals.nextPage!=7) { %>
                                     <button type="submit"
@@ -167,70 +178,70 @@
     </footer>
 </body>
 <script>
-   // Function to validate if at least one option is selected for each question
-function validateForm() {
-    let questions = document.querySelectorAll('[name^="color"]');
-    let questionGroups = {}; // Object to store selected options for each question
-    let isValid = true; // Flag to track overall validation result
-    
-    questions.forEach(question => {
-        let questionId = question.name.replace("color", ""); // Extract question ID
-        if (!questionGroups[questionId]) {
-            questionGroups[questionId] = [];
-        }
-        if (question.checked) {
-            if (questionGroups[questionId].includes(question.value)) {
-                // Alert if the same option is selected again
-                alert("You can only select one option per question.");
-                isValid = false;
-            } else {
-                questionGroups[questionId].push(question.value);
+    // Function to validate if at least one option is selected for each question
+    function validateForm() {
+        let questions = document.querySelectorAll('[name^="color"]');
+        let questionGroups = {}; // Object to store selected options for each question
+        let isValid = true; // Flag to track overall validation result
+
+        questions.forEach(question => {
+            let questionId = question.name.replace("color", ""); // Extract question ID
+            if (!questionGroups[questionId]) {
+                questionGroups[questionId] = [];
             }
-        }
-    });
+            if (question.checked) {
+                if (questionGroups[questionId].includes(question.value)) {
+                    // Alert if the same option is selected again
+                    alert("You can only select one option per question.");
+                    isValid = false;
+                } else {
+                    questionGroups[questionId].push(question.value);
+                }
+            }
+        });
 
-    if (!isValid) {
-        return false;
-    }
-
-    for (let questionId in questionGroups) {
-        if (questionGroups[questionId].length !== 1) {
-            // Alert if no option is selected for a question
-            alert("Please select one option for each question.");
+        if (!isValid) {
             return false;
         }
+
+        for (let questionId in questionGroups) {
+            if (questionGroups[questionId].length !== 1) {
+                // Alert if no option is selected for a question
+                alert("Please select one option for each question.");
+                return false;
+            }
+        }
+
+        return true;
     }
 
-    return true;
-}
-
-// Attach the validation function to the form submission event
-document.querySelector('form').addEventListener('submit', function (event) {
-    if (!validateForm()) {
-        event.preventDefault(); // Prevent form submission if validation fails
-    }
-});
-
-document.addEventListener('DOMContentLoaded', function () {
-    // Toggle the "hidden" class on the navbar menu when the button is clicked
-    document.getElementById('navbar-toggle').addEventListener('click', function () {
-        var menu = document.getElementById('navbar-menu');
-        menu.classList.toggle('hidden');
-    });
-});
-
-function toggleBackground(element) {
-    let questionId = element.name.replace("color", "");
-    let options = document.querySelectorAll('[name="color' + questionId + '"]');
-    options.forEach(option => {
-        // Add background color class only to the selected option
-        if (option.checked) {
-            option.nextElementSibling.classList.add('bg-teal-500');
-        } else {
-            option.nextElementSibling.classList.remove('bg-teal-500');
+    // Attach the validation function to the form submission event
+    document.querySelector('form').addEventListener('submit', function (event) {
+        if (!validateForm()) {
+            event.preventDefault(); // Prevent form submission if validation fails
         }
     });
-}
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Toggle the "hidden" class on the navbar menu when the button is clicked
+        document.getElementById('navbar-toggle').addEventListener('click', function () {
+            var menu = document.getElementById('navbar-menu');
+            menu.classList.toggle('hidden');
+        });
+    });
+
+    function toggleBackground(element) {
+        let questionId = element.name.replace("color", "");
+        let options = document.querySelectorAll('[name="color' + questionId + '"]');
+        options.forEach(option => {
+            // Add background color class only to the selected option
+            if (option.checked) {
+                option.nextElementSibling.classList.add('bg-teal-500');
+            } else {
+                option.nextElementSibling.classList.remove('bg-teal-500');
+            }
+        });
+    }
 
 
 </script>
