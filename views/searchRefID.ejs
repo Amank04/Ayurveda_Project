@@ -1,45 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Questionnaire</title>
+        <!-- Include Tailwind CSS -->
+        <link rel="stylesheet" href="/styles/style.css"> <!-- Update the path to your CSS file -->
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.4/html2pdf.bundle.min.js"></script> -->
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Questionnaire</title>
-    <!-- Include Tailwind CSS -->
-    <link rel="stylesheet" href="/styles/style.css"> <!-- Update the path to your CSS file -->
-    <style>
-        /* Your custom styles here */
-        /* Custom heading style */
-        .user-prakriti {
-            font-size: 2rem;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 20px;
-            color: #4A5568;
-            /* Dark gray color */
-        }
 
-        .footer-text {
-            font-size: 0.9rem;
-        }
+        <style>
+            /* Your custom styles here */
+            /* Custom heading style */
+            .user-prakriti {
+                font-size: 2rem;
+                font-weight: bold;
+                text-align: center;
+                margin-bottom: 20px;
+                color: #4A5568;
+                /* Dark gray color */
+            }
+            
+            .footer-text {
+                font-size: 0.9rem;
+            }
+            
+            /* Custom Styles */
+            .navbar-brand {
+                font-size: 1.5rem;
+                font-weight: bold;
+            }
+            
+            .nav-link {
+                font-size: 1.1rem;
+            }
+            </style>
 
-        /* Custom Styles */
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .nav-link {
-            font-size: 1.1rem;
-        }
-    </style>
 </head>
 
 <body class="bg-gray-100 ">
     <!-- Navigation bar -->
     <nav class="bg-teal-500 p-6 mb-12">
         <div class="container">
-
+            
             <div class="w-full flex items-center justify-between">
                 <div class="flex items-center">
                     <img src="/Images/Ayurveda-icon2.png" alt="Ayurveda is life" class="inline-block w-10 h-10 mr-2">
@@ -48,7 +52,7 @@
                     Ayurveda Life
                 </div>
                 <div>
-
+                    
                     <button id="navbar-toggle" class="text-white md:hidden">
                         <svg class="fill-current h-6 w-6" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <title>Menu</title>
@@ -84,7 +88,9 @@
 
             <% if(locals.name) { %>
 
-            <div class="p-8">
+            <div id="element-to-print" class="p-8">
+                <button id="download-pdf-btn" class="bg-teal-500">Download PDF</button>
+
                 <h1 class="user-prakriti text-2xl font-semibold mb-4 text-center">Your Prakriti: <span
                         class="text-teal-500 text-3xl">
                     <%=prakirtiMajor %>-<%=prakirtiMinor %>
@@ -138,12 +144,34 @@
     <!-- JavaScript -->
     <script>
 
-        // Toggle the "hidden" class on the navbar menu when the button is clicked
-        document.getElementById('navbar-toggle').addEventListener('click', function () {
-            var menu = document.getElementById('navbar-menu');
-            menu.classList.toggle('hidden');
+         // Toggle the "hidden" class on the navbar menu when the button is clicked
+    document.getElementById('navbar-toggle').addEventListener('click', function () {
+        var menu = document.getElementById('navbar-menu');
+        menu.classList.toggle('hidden');
+    });
+     
+    function addScript(url) {
+    var script = document.createElement('script');
+    script.type = 'application/javascript';
+    script.src = url;
+    document.head.appendChild(script);
+}
+addScript('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
+    // Function to generate and download PDF
+    function generatePDF() {
+        var element = document.getElementById('element-to-print');
+        html2pdf().from(element).save();
+    }
+
+    // Wait for the DOM content to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Attach the generatePDF function to the click event of the "Download PDF" button
+        document.getElementById('download-pdf-btn').addEventListener('click', function () {
+            generatePDF();
         });
+    });
+
     </script>
 </body>
-
+<!-- Include the jsPDF library -->
 </html>

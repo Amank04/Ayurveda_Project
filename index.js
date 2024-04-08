@@ -36,6 +36,54 @@ app.get('/history', (req, res) => {
   res.render('searchRefID');
 })
 
+app.get('/previous', (req,res) => {
+  let currPage = req.query.page;
+
+  console.log("Page no. in just previous is: ",currPage);
+
+  let startIndex, endIndex;
+  let subsetOfQuestions;
+  let section;
+
+  if(currPage == 2) {
+    console.log("page no in page 2 is: ", currPage);
+    console.log("Dhappa!");
+    res.render('questions', { nextPage: 1 });
+  } else if (currPage == 3) {
+    section = 'Physical appearance and health.';
+    console.log(section);
+    startIndex = 0, endIndex = 14;
+    subsetOfQuestions = questions.slice(startIndex, endIndex + 1);
+
+    res.render('questions', { Questions: subsetOfQuestions, section, nextPage: currPage - 1 });
+  } else if(currPage == 4) {
+    section = 'Sleep pattern and energy levels';
+    startIndex = 15, endIndex = 16;
+    subsetOfQuestions = questions.slice(startIndex, endIndex + 1);
+
+
+    res.render('questions', { Questions: subsetOfQuestions, section, nextPage: currPage - 1 });
+  } else if(currPage == 5) {
+    section = 'Diet, appetite and type of food you prefer';
+    startIndex = 17, endIndex = 21;
+    subsetOfQuestions = questions.slice(startIndex, endIndex + 1);
+
+    res.render('questions', { Questions: subsetOfQuestions, section, nextPage: currPage - 1 });
+  } else if(currPage == 6) {
+    section = 'Personality, communication skills and social behavior';
+    startIndex = 22, endIndex = 28;
+    subsetOfQuestions = questions.slice(startIndex, endIndex + 1);
+
+    res.render('questions', { Questions: subsetOfQuestions, section, nextPage: currPage - 1 });
+  } else if(currPage == 7) {
+    section = 'Preferred type of weather';
+    startIndex = 29, endIndex = 29;
+    subsetOfQuestions = questions.slice(startIndex, endIndex + 1);
+
+    res.render('questions', { Questions: subsetOfQuestions, section, nextPage: currPage - 1 });
+  }
+})
+
 //Array containing answer of each question.
 var ansArray;
 
