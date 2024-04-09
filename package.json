@@ -5,10 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "tailwind:css": "postcss public/styles/tailwind.css -o public/styles/style.css",
-    "build:tailwind": "tailwindcss build -o ./path/to/output.css",
-    "watch:tailwind": "tailwindcss build -o public/styles/style.css --watch",
-    "start": "npm run watch:tailwind && nodemon index.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

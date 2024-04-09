@@ -4,6 +4,8 @@ import bodyParser from "body-parser";
 import env from "dotenv";
 import uniqid from "uniqid";
 
+const { Pool } = pg;
+
 const app = express();
 env.config();
 
@@ -13,14 +15,10 @@ app.use(bodyParser.json());
 app.use(express.static("public"));
 app.set('view engine', 'ejs');
 
-const db = new pg.Client({
-  user: process.env.PG_USER,
-  host: process.env.PG_HOST,
-  database: process.env.PG_DATABASE,
-  password: process.env.PG_PASSWORD,
-  port: process.env.PG_PORT,
-});
-db.connect();
+const pool = new Pool({
+  connectionString: process.env.POSTGRES_URL ,
+})
+pool.connect();
 
 app.get('/', (req, res) => {
 
